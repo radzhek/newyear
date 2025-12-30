@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: linear-gradient(180deg, #0e0e11, #14141a);
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.step {
+    display: none;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    animation: fade 0.6s ease;
+}
+
+.step.active {
+    display: block;
+}
+
+@keyframes fade {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    border-radius: 14px;
+    border: none;
+    outline: none;
+    text-align: center;
+}
+
+button {
+    width: 100%;
+    margin-top: 16px;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 14px;
+    border: none;
+    background: #ffffff;
+    color: #000000;
+}
+
+.reset {
+    margin-top: 18px;
+    font-size: 13px;
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.error {
+    margin-top: 12px;
+    min-height: 18px;
+    font-size: 14px;
+    color: #ff8a8a;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="step" id="step1">
+        <input placeholder="Введите ответ">
+        <button onclick="check(1)">Продолжить</button>
+        <div class="error"></div>
+        <div class="reset" onclick="resetQuest()">Начать заново</div>
+    </div>
+
+    <div class="step" id="step2">
+        <input placeholder="Введите ответ">
+        <button onclick="check(2)">Продолжить</button>
+        <div class="error"></div>
+        <div class="reset" onclick="resetQuest()">Начать заново</div>
+    </div>
+
+    <div class="step" id="step3">
+        <input placeholder="Введите ответ">
+        <button onclick="check(3)">Продолжить</button>
+        <div class="error"></div>
+        <div class="reset" onclick="resetQuest()">Начать заново</div>
+    </div>
+
+    <div class="step" id="step4">
+        <input placeholder="Введите ответ">
+        <button onclick="check(4)">Продолжить</button>
+        <div class="error"></div>
+        <div class="reset" onclick="resetQuest()">Начать заново</div>
+    </div>
+
+    <div class="step" id="step5">
+        <input placeholder="Введите ответ">
+        <button onclick="check(5)">Продолжить</button>
+        <div class="error"></div>
+        <div class="reset" onclick="resetQuest()">Начать заново</div>
+    </div>
+
+</div>
+
+<script>
+const answers = {
+    1: ["диван"],
+    2: ["кровать"],
+    3: ["дверь"],
+    4: ["туалет"],
+    5: ["стол"]
+};
+
+const storageKey = "quest_step";
+
+function normalize(text) {
+    return text
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .replace(/ё/g, "е");
+}
+
+function showStep(step) {
+    document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+    document.getElementById("step" + step).classList.add("active");
+}
+
+function check(step) {
+    const block = document.getElementById("step" + step);
+    const input = block.querySelector("input");
+    const error = block.querySelector(".error");
+
+    if (answers[step].includes(normalize(input.value))) {
+        if (navigator.vibrate) navigator.vibrate(30);
+        localStorage.setItem(storageKey, step + 1);
+
+        if (step < 5) {
+            showStep(step + 1);
+        } else {
+            // после 5 этапа сайт просто заканчивается
+            document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+        }
+    } else {
+        error.textContent = "Попробуй ещё раз";
+    }
+}
+
+function resetQuest() {
+    localStorage.removeItem(storageKey);
+    showStep(1);
+}
+
+const savedStep = parseInt(localStorage.getItem(storageKey)) || 1;
+showStep(Math.min(savedStep, 5));
+</script>
+
+</body>
+</html>
